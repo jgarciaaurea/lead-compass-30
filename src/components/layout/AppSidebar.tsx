@@ -17,6 +17,7 @@ const navItems = [
   { title: 'Dashboard', url: '/', icon: LayoutDashboard },
   { title: 'Empresas', url: '/companies', icon: Building2 },
   { title: 'Añadir Empresa', url: '/companies/new', icon: Plus },
+  { title: 'Scraper', url: '/scrape', icon: Globe },
 ];
 
 export function AppSidebar() {

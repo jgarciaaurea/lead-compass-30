@@ -25,6 +25,7 @@ const App = () => (
             <Route path="/companies" element={<CompaniesPage />} />
             <Route path="/companies/new" element={<AddCompany />} />
             <Route path="/companies/:id" element={<CompanyDetail />} />
+            <Route path="/scrape" element={<ScrapePage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AppLayout>
