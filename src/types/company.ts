@@ -6,6 +6,7 @@ export interface Company {
   website: string;
   sector: string;
   location: string;
+  description?: string;
   score: number;
   status: LeadStatus;
   contact: {

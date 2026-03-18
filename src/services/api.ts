@@ -50,8 +50,9 @@ function mapCompany(d: any): Company {
     id: String(d.id),
     name: d.title || d.url || "Sin nombre",
     website: d.url || "",
-    sector: "-",
-    location: "-",
+    description: d.description || "",
+    sector: d.sector || "-",
+    location: d.location || "-",
     score: 50,
     status: "nuevo",
     contact: {
