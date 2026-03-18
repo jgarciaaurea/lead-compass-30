@@ -8,7 +8,7 @@ import { ActivityTimeline } from '@/components/shared/ActivityTimeline';
 import { SubsidyList } from '@/components/shared/SubsidyList';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { ArrowLeft, FileText, Phone, MessageSquare, Globe, MapPin, Mail, Loader2 } from 'lucide-react';
+import { ArrowLeft, FileText, Phone, MessageSquare, Globe, MapPin, Mail, Loader2, Building2, Hash } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function CompanyDetail() {

@@ -46,18 +46,24 @@ export const CompanyService = {
 };
 
 function mapCompany(d: any): Company {
+  const emailsList = d.email ? d.email.split("|").filter(Boolean) : [];
+  const phonesList = d.phone ? d.phone.split("|").filter(Boolean) : [];
   return {
     id: String(d.id),
-    name: d.title || d.url || "Sin nombre",
+    name: d.legal_name || d.title || d.url || "Sin nombre",
     website: d.url || "",
     description: d.description || "",
     sector: d.sector || "-",
     location: d.location || "-",
+    cif: d.cif || "",
+    legal_name: d.legal_name || "",
+    emails: emailsList,
+    phones: phonesList,
     score: 50,
     status: "nuevo",
     contact: {
-      email: d.email?.split("|")[0] || "-",
-      phone: d.phone?.split("|")[0] || "-",
+      email: emailsList[0] || "-",
+      phone: phonesList[0] || "-",
     },
     createdAt: new Date().toISOString().split("T")[0],
     notes: [],
