@@ -7,6 +7,10 @@ export interface Company {
   sector: string;
   location: string;
   description?: string;
+  cif?: string;
+  legal_name?: string;
+  emails?: string[];
+  phones?: string[];
   score: number;
   status: LeadStatus;
   contact: {
