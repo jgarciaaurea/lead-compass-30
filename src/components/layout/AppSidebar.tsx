@@ -18,6 +18,7 @@ const navItems = [
   { title: 'Empresas', url: '/companies', icon: Building2 },
   { title: 'Añadir Empresa', url: '/companies/new', icon: Plus },
   { title: 'Scraper', url: '/scrape', icon: Globe },
+  { title: 'Búsqueda', url: '/search', icon: Search },
 ];
 
 export function AppSidebar() {
