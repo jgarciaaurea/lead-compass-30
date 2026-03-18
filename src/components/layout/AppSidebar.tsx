@@ -11,7 +11,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { LayoutDashboard, Building2, Plus, Zap } from 'lucide-react';
+import { LayoutDashboard, Building2, Plus, Zap, Globe } from 'lucide-react';
 
 const navItems = [
   { title: 'Dashboard', url: '/', icon: LayoutDashboard },
