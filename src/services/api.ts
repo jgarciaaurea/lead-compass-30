@@ -1,52 +1,66 @@
-import { Company, LeadStatus } from '@/types/company';
-import { mockCompanies } from '@/mocks/companies';
+import { Company, LeadStatus } from "@/types/company";
 
-const delay = (ms = 400) => new Promise(resolve => setTimeout(resolve, ms));
-
-let companies = [...mockCompanies];
+const API_URL = "https://unvouched-orrow-lorri.ngrok-free.dev";
 
 export const CompanyService = {
   async getAll(): Promise<Company[]> {
-    await delay();
-    return [...companies];
+    const res = await fetch(`${API_URL}/companies`);
+    const data = await res.json();
+    return data.map(mapCompany);
   },
 
   async getById(id: string): Promise<Company | undefined> {
-    await delay();
-    return companies.find(c => c.id === id);
+    const res = await fetch(`${API_URL}/companies`);
+    const data = await res.json();
+    return data.map(mapCompany).find((c: Company) => c.id === id);
   },
 
-  async create(data: Omit<Company, 'id' | 'createdAt' | 'notes' | 'activities' | 'subsidies' | 'score' | 'status'>): Promise<Company> {
-    await delay();
-    const newCompany: Company = {
-      ...data,
-      id: String(Date.now()),
-      score: Math.floor(Math.random() * 60) + 30,
-      status: 'nuevo',
-      createdAt: new Date().toISOString().split('T')[0],
-      notes: [],
-      activities: [{ id: `a-${Date.now()}`, date: new Date().toISOString().split('T')[0], type: 'estado', description: 'Lead creado manualmente' }],
-      subsidies: [],
-    };
-    companies = [newCompany, ...companies];
-    return newCompany;
+  async create(
+    input: Omit<Company, "id" | "createdAt" | "notes" | "activities" | "subsidies" | "score" | "status">,
+  ): Promise<Company> {
+    const res = await fetch(`${API_URL}/companies`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        url: input.website,
+        title: input.name,
+        email: input.contact.email,
+        phone: input.contact.phone,
+      }),
+    });
+    const data = await res.json();
+    return mapCompany(data);
   },
 
   async updateStatus(id: string, status: LeadStatus): Promise<Company | undefined> {
-    await delay();
-    companies = companies.map(c => c.id === id ? { ...c, status, activities: [...c.activities, { id: `a-${Date.now()}`, date: new Date().toISOString().split('T')[0], type: 'estado' as const, description: `Estado cambiado a "${status}"` }] } : c);
-    return companies.find(c => c.id === id);
+    return undefined; // implementar cuando añadas el endpoint en FastAPI
   },
 
   async addNote(id: string, note: string): Promise<Company | undefined> {
-    await delay();
-    companies = companies.map(c => c.id === id ? { ...c, notes: [...c.notes, note], activities: [...c.activities, { id: `a-${Date.now()}`, date: new Date().toISOString().split('T')[0], type: 'nota' as const, description: note }] } : c);
-    return companies.find(c => c.id === id);
+    return undefined; // implementar cuando añadas el endpoint en FastAPI
   },
 
   async generateOffer(id: string): Promise<{ success: boolean; message: string }> {
-    await delay(1200);
-    companies = companies.map(c => c.id === id ? { ...c, activities: [...c.activities, { id: `a-${Date.now()}`, date: new Date().toISOString().split('T')[0], type: 'oferta' as const, description: 'Oferta PDF generada' }] } : c);
-    return { success: true, message: 'Oferta PDF preparada.' };
+    return { success: true, message: "Oferta PDF preparada." };
   },
 };
+
+function mapCompany(d: any): Company {
+  return {
+    id: String(d.id),
+    name: d.title || d.url || "Sin nombre",
+    website: d.url || "",
+    sector: "-",
+    location: "-",
+    score: 50,
+    status: "nuevo",
+    contact: {
+      email: d.email?.split("|")[0] || "-",
+      phone: d.phone?.split("|")[0] || "-",
+    },
+    createdAt: new Date().toISOString().split("T")[0],
+    notes: [],
+    activities: [],
+    subsidies: [],
+  };
+}
