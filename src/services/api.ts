@@ -4,13 +4,13 @@ const API_URL = "https://unvouched-orrow-lorri.ngrok-free.dev";
 
 export const CompanyService = {
   async getAll(): Promise<Company[]> {
-    const res = await fetch(`${API_URL}/companies`);
+    const res = await fetch(`${API_URL}/companies`, { headers: { 'ngrok-skip-browser-warning': 'true' } });
     const data = await res.json();
     return data.map(mapCompany);
   },
 
   async getById(id: string): Promise<Company | undefined> {
-    const res = await fetch(`${API_URL}/companies`);
+    const res = await fetch(`${API_URL}/companies`, { headers: { 'ngrok-skip-browser-warning': 'true' } });
     const data = await res.json();
     return data.map(mapCompany).find((c: Company) => c.id === id);
   },
@@ -20,7 +20,7 @@ export const CompanyService = {
   ): Promise<Company> {
     const res = await fetch(`${API_URL}/companies`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
       body: JSON.stringify({
         url: input.website,
         title: input.name,
