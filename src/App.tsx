@@ -9,6 +9,7 @@ import CompaniesPage from "./pages/CompaniesPage";
 import CompanyDetail from "./pages/CompanyDetail";
 import AddCompany from "./pages/AddCompany";
 import ScrapePage from "./pages/ScrapePage";
+import SearchPage from "./pages/SearchPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/companies/new" element={<AddCompany />} />
             <Route path="/companies/:id" element={<CompanyDetail />} />
             <Route path="/scrape" element={<ScrapePage />} />
+            <Route path="/search" element={<SearchPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AppLayout>
