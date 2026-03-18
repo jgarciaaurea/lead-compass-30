@@ -9,6 +9,7 @@ import CompaniesPage from "./pages/CompaniesPage";
 import CompanyDetail from "./pages/CompanyDetail";
 import AddCompany from "./pages/AddCompany";
 import ScrapePage from "./pages/ScrapePage";
+import SearchPage from "./pages/SearchPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
