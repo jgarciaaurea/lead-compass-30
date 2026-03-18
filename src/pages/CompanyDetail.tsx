@@ -145,6 +145,21 @@ export default function CompanyDetail() {
               </div>
             </div>
 
+            {/* Addresses */}
+            {company.addresses && company.addresses.length > 0 && (
+              <div className="pt-2 border-t border-border">
+                <span className="text-xs text-muted-foreground uppercase tracking-wider">Direcciones</span>
+                <div className="mt-1 space-y-1">
+                  {company.addresses.map((addr, i) => (
+                    <div key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <MapPin className="h-3.5 w-3.5 shrink-0" strokeWidth={1.5} />
+                      <span>{addr}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {company.description && (
               <div className="pt-2 border-t border-border">
                 <span className="text-xs text-muted-foreground uppercase tracking-wider">Descripción</span>

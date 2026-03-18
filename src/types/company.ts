@@ -10,6 +10,7 @@ export interface Company {
   cif?: string;
   legal_name?: string;
   emails?: string[];
+  addresses?: string[];
   phones?: string[];
   score: number;
   status: LeadStatus;
