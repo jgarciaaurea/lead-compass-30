@@ -4,7 +4,7 @@ const API_URL = "https://unvouched-orrow-lorri.ngrok-free.dev";
 
 export const CompanyService = {
   async getAll(): Promise<Company[]> {
-    const res = await fetch(`${API_URL}/companies`);
+    const res = await fetch(`${API_URL}/companies`, { headers: { 'ngrok-skip-browser-warning': 'true' } });
     const data = await res.json();
     return data.map(mapCompany);
   },
