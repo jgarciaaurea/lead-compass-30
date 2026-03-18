@@ -59,6 +59,7 @@ function mapCompany(d: any): Company {
     legal_name: d.legal_name || "",
     emails: emailsList,
     phones: phonesList,
+    addresses: Array.isArray(d.addresses) ? d.addresses : [],
     score: 50,
     status: "nuevo",
     contact: {
