@@ -19,7 +19,7 @@ export default function ScrapePage() {
     try {
       const res = await fetch('https://unvouched-orrow-lorri.ngrok-free.dev/scrape', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
         body: JSON.stringify({ url: url.trim() }),
       });
       const data = await res.json();
