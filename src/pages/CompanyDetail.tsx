@@ -106,6 +106,12 @@ export default function CompanyDetail() {
                 {company.contact.phone}
               </div>
             </div>
+            {company.description && (
+              <div className="pt-2 border-t border-border">
+                <span className="text-xs text-muted-foreground uppercase tracking-wider">Descripción</span>
+                <p className="text-sm text-foreground mt-0.5">{company.description}</p>
+              </div>
+            )}
             <div className="pt-2 border-t border-border">
               <span className="text-xs text-muted-foreground uppercase tracking-wider">Sector</span>
               <p className="text-sm font-medium text-foreground mt-0.5">{company.sector}</p>
