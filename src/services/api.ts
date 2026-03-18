@@ -10,7 +10,7 @@ export const CompanyService = {
   },
 
   async getById(id: string): Promise<Company | undefined> {
-    const res = await fetch(`${API_URL}/companies`);
+    const res = await fetch(`${API_URL}/companies`, { headers: { 'ngrok-skip-browser-warning': 'true' } });
     const data = await res.json();
     return data.map(mapCompany).find((c: Company) => c.id === id);
   },
