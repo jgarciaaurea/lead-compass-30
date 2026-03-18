@@ -97,15 +97,54 @@ export default function CompanyDetail() {
                 <MapPin className="h-4 w-4" strokeWidth={1.5} />
                 {company.location}
               </div>
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Mail className="h-4 w-4" strokeWidth={1.5} />
-                {company.contact.email}
-              </div>
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Phone className="h-4 w-4" strokeWidth={1.5} />
-                {company.contact.phone}
+              {company.cif && (
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Hash className="h-4 w-4" strokeWidth={1.5} />
+                  <span><span className="font-medium text-foreground">CIF:</span> {company.cif}</span>
+                </div>
+              )}
+              {company.legal_name && (
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Building2 className="h-4 w-4" strokeWidth={1.5} />
+                  <span><span className="font-medium text-foreground">Razón social:</span> {company.legal_name}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Emails */}
+            <div className="pt-2 border-t border-border">
+              <span className="text-xs text-muted-foreground uppercase tracking-wider">Emails</span>
+              <div className="mt-1 space-y-1">
+                {company.emails && company.emails.length > 0 ? (
+                  company.emails.map((email, i) => (
+                    <div key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Mail className="h-3.5 w-3.5" strokeWidth={1.5} />
+                      <a href={`mailto:${email}`} className="text-primary hover:underline">{email}</a>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-sm text-muted-foreground">-</p>
+                )}
               </div>
             </div>
+
+            {/* Phones */}
+            <div className="pt-2 border-t border-border">
+              <span className="text-xs text-muted-foreground uppercase tracking-wider">Teléfonos</span>
+              <div className="mt-1 space-y-1">
+                {company.phones && company.phones.length > 0 ? (
+                  company.phones.map((phone, i) => (
+                    <div key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Phone className="h-3.5 w-3.5" strokeWidth={1.5} />
+                      <a href={`tel:${phone}`} className="text-primary hover:underline">{phone}</a>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-sm text-muted-foreground">-</p>
+                )}
+              </div>
+            </div>
+
             {company.description && (
               <div className="pt-2 border-t border-border">
                 <span className="text-xs text-muted-foreground uppercase tracking-wider">Descripción</span>
