@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import CompaniesPage from "./pages/CompaniesPage";
 import CompanyDetail from "./pages/CompanyDetail";
 import AddCompany from "./pages/AddCompany";
+import ScrapePage from "./pages/ScrapePage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
