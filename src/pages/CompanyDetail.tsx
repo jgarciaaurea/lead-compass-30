@@ -192,10 +192,46 @@ export default function CompanyDetail() {
             <ActivityTimeline activities={company.activities} />
           </div>
 
-          {/* Subsidies */}
+          {/* Subsidies BDNS */}
           <div className="card-surface p-4">
-            <h2 className="text-sm font-semibold text-foreground mb-3">Subvenciones detectadas</h2>
-            <SubsidyList subsidies={company.subsidies} />
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-sm font-semibold text-foreground">Subvenciones BDNS</h2>
+              {bdns && (
+                <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                  <span>{bdns.total_subsidies} subvenciones</span>
+                  <span className="flex items-center gap-1 font-medium text-green-600">
+                    <Euro className="h-3 w-3" />
+                    {bdns.total_amount?.toLocaleString('es-ES')} €
+                  </span>
+                </div>
+              )}
+            </div>
+            {!company.cif ? (
+              <p className="text-sm text-muted-foreground">CIF no disponible para consultar subvenciones.</p>
+            ) : loadingBdns ? (
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Consultando BDNS...
+              </div>
+            ) : bdns?.subsidies?.length > 0 ? (
+              <div className="space-y-2">
+                {bdns.subsidies.map((s: any) => (
+                  <div key={s.id} className="border border-border rounded-md p-3 space-y-1">
+                    <p className="text-xs font-medium text-foreground line-clamp-2">{s.title}</p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-muted-foreground">{s.organism}</span>
+                      <span className="text-xs font-semibold text-green-600">{s.amount?.toLocaleString('es-ES')} €</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-muted-foreground">{s.region}</span>
+                      <span className="text-xs text-muted-foreground">{s.date}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">No se encontraron subvenciones en la BDNS.</p>
+            )}
           </div>
         </div>
 
