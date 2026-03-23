@@ -18,6 +18,8 @@ export default function CompanyDetail() {
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [noteText, setNoteText] = useState('');
+  const [bdns, setBdns] = useState<any>(null);
+  const [loadingBdns, setLoadingBdns] = useState(false);
 
   useEffect(() => {
     if (id) {
