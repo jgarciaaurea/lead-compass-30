@@ -30,6 +30,18 @@ export default function CompanyDetail() {
     }
   }, [id]);
 
+  useEffect(() => {
+    if (company?.cif) {
+      setLoadingBdns(true);
+      fetch(`https://unvouched-orrow-lorri.ngrok-free.dev/bdns/${company.cif}`, {
+        headers: { 'ngrok-skip-browser-warning': 'true' }
+      })
+        .then(res => res.json())
+        .then(data => { setBdns(data); setLoadingBdns(false); })
+        .catch(() => setLoadingBdns(false));
+    }
+  }, [company]);
+
   const handleStatusChange = async (status: LeadStatus) => {
     if (!id) return;
     const updated = await CompanyService.updateStatus(id, status);
