@@ -17,6 +17,7 @@ export default function CompanyDetail() {
   const [company, setCompany] = useState<Company | null>(null);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
+  const [proposal, setProposal] = useState<string | null>(null);
   const [noteText, setNoteText] = useState('');
   const [bdns, setBdns] = useState<any>(null);
   const [loadingBdns, setLoadingBdns] = useState(false);
