@@ -8,7 +8,7 @@ import { ActivityTimeline } from '@/components/shared/ActivityTimeline';
 import { SubsidyList } from '@/components/shared/SubsidyList';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { ArrowLeft, FileText, Phone, MessageSquare, Globe, MapPin, Mail, Loader2, Building2, Hash, Euro, TrendingUp } from 'lucide-react';
+import { ArrowLeft, FileText, Phone, MessageSquare, Globe, MapPin, Mail, Loader2, Building2, Hash, Euro, TrendingUp, Copy, Check } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function CompanyDetail() {
@@ -17,6 +17,7 @@ export default function CompanyDetail() {
   const [company, setCompany] = useState<Company | null>(null);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
+  const [proposal, setProposal] = useState<string | null>(null);
   const [noteText, setNoteText] = useState('');
   const [bdns, setBdns] = useState<any>(null);
   const [loadingBdns, setLoadingBdns] = useState(false);
@@ -51,12 +52,18 @@ export default function CompanyDetail() {
   const handleGenerateOffer = async () => {
     if (!id) return;
     setGenerating(true);
-    const result = await CompanyService.generateOffer(id);
-    setGenerating(false);
-    if (result.success) {
-      toast.success(result.message);
-      const updated = await CompanyService.getById(id);
-      if (updated) setCompany(updated);
+    setProposal(null);
+    try {
+      const res = await fetch(`https://unvouched-orrow-lorri.ngrok-free.dev/propose/${id}`, {
+        headers: { 'ngrok-skip-browser-warning': 'true' }
+      });
+      const data = await res.json();
+      setProposal(data.proposal || 'No se pudo generar la propuesta.');
+      toast.success('Oferta generada correctamente');
+    } catch {
+      toast.error('Error al generar la oferta');
+    } finally {
+      setGenerating(false);
     }
   };
 
@@ -244,6 +251,27 @@ export default function CompanyDetail() {
               {generating ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <FileText className="h-4 w-4 mr-1" strokeWidth={1.5} />}
               {generating ? 'Generando oferta...' : 'Generar oferta'}
             </Button>
+
+            {proposal && (
+              <div className="border border-border rounded-md p-3 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Propuesta generada</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 px-2 text-xs"
+                    onClick={() => {
+                      navigator.clipboard.writeText(proposal);
+                      toast.success('Propuesta copiada al portapapeles');
+                    }}
+                  >
+                    <Copy className="h-3.5 w-3.5 mr-1" />
+                    Copiar
+                  </Button>
+                </div>
+                <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">{proposal}</p>
+              </div>
+            )}
 
             {company.status !== 'contactado' && (
               <Button variant="outline" className="w-full btn-press" onClick={() => handleStatusChange('contactado')}>
