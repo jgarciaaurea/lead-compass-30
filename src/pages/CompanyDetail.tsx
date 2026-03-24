@@ -252,7 +252,27 @@ export default function CompanyDetail() {
               {generating ? 'Generando oferta...' : 'Generar oferta'}
             </Button>
 
-            {company.status !== 'contactado' && (
+            {proposal && (
+              <div className="border border-border rounded-md p-3 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Propuesta generada</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 px-2 text-xs"
+                    onClick={() => {
+                      navigator.clipboard.writeText(proposal);
+                      toast.success('Propuesta copiada al portapapeles');
+                    }}
+                  >
+                    <Copy className="h-3.5 w-3.5 mr-1" />
+                    Copiar
+                  </Button>
+                </div>
+                <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">{proposal}</p>
+              </div>
+            )}
+
               <Button variant="outline" className="w-full btn-press" onClick={() => handleStatusChange('contactado')}>
                 <Phone className="h-4 w-4 mr-1" strokeWidth={1.5} />
                 Marcar como contactado
