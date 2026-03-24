@@ -273,6 +273,7 @@ export default function CompanyDetail() {
               </div>
             )}
 
+            {company.status !== 'contactado' && (
               <Button variant="outline" className="w-full btn-press" onClick={() => handleStatusChange('contactado')}>
                 <Phone className="h-4 w-4 mr-1" strokeWidth={1.5} />
                 Marcar como contactado
