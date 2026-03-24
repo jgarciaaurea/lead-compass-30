@@ -52,12 +52,18 @@ export default function CompanyDetail() {
   const handleGenerateOffer = async () => {
     if (!id) return;
     setGenerating(true);
-    const result = await CompanyService.generateOffer(id);
-    setGenerating(false);
-    if (result.success) {
-      toast.success(result.message);
-      const updated = await CompanyService.getById(id);
-      if (updated) setCompany(updated);
+    setProposal(null);
+    try {
+      const res = await fetch(`https://unvouched-orrow-lorri.ngrok-free.dev/propose/${id}`, {
+        headers: { 'ngrok-skip-browser-warning': 'true' }
+      });
+      const data = await res.json();
+      setProposal(data.proposal || 'No se pudo generar la propuesta.');
+      toast.success('Oferta generada correctamente');
+    } catch {
+      toast.error('Error al generar la oferta');
+    } finally {
+      setGenerating(false);
     }
   };
 
