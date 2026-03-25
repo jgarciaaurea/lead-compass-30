@@ -7,6 +7,46 @@ import { Loader2, CheckCircle2, XCircle, AlertTriangle, MapPin, Globe, Search, S
 
 const API_URL = 'https://unvouched-orrow-lorri.ngrok-free.dev';
 
+const SECTORES = [
+  'Construcción y reformas',
+  'Fontanería y climatización',
+  'Electricidad e iluminación',
+  'Restaurantes y hostelería',
+  'Abogados y asesorías',
+  'Consultoría y gestión empresarial',
+  'Informática y tecnología',
+  'Salud y medicina',
+  'Educación y formación',
+  'Transporte y logística',
+  'Comercio y retail',
+  'Industria y fabricación',
+  'Inmobiliaria',
+  'Marketing y publicidad',
+  'Seguridad',
+];
+
+const COMUNIDADES_CIUDADES: Record<string, string[]> = {
+  'Andalucía': ['Sevilla', 'Málaga', 'Córdoba', 'Granada', 'Jaén', 'Almería', 'Huelva', 'Cádiz', 'Jerez de la Frontera', 'Marbella'],
+  'Aragón': ['Zaragoza', 'Huesca', 'Teruel', 'Calatayud', 'Utebo'],
+  'Asturias': ['Oviedo', 'Gijón', 'Avilés', 'Mieres', 'Langreo'],
+  'Islas Baleares': ['Palma de Mallorca', 'Ibiza', 'Manacor', 'Mahón', 'Ciutadella'],
+  'Canarias': ['Las Palmas de Gran Canaria', 'Santa Cruz de Tenerife', 'La Laguna', 'Arrecife', 'Telde'],
+  'Cantabria': ['Santander', 'Torrelavega', 'Castro Urdiales', 'Camargo', 'Piélagos'],
+  'Castilla-La Mancha': ['Toledo', 'Ciudad Real', 'Albacete', 'Guadalajara', 'Cuenca', 'Talavera de la Reina', 'Puertollano'],
+  'Castilla y León': ['Valladolid', 'Burgos', 'Salamanca', 'León', 'Palencia', 'Zamora', 'Segovia', 'Ávila', 'Soria', 'Ponferrada'],
+  'Cataluña': ['Barcelona', 'Tarragona', 'Lleida', 'Girona', 'Sabadell', 'Terrassa', 'Badalona', 'Hospitalet de Llobregat'],
+  'Comunidad Valenciana': ['Valencia', 'Alicante', 'Castellón de la Plana', 'Elche', 'Torrevieja', 'Benidorm', 'Gandía'],
+  'Extremadura': ['Badajoz', 'Cáceres', 'Mérida', 'Plasencia', 'Don Benito', 'Almendralejo', 'Villanueva de la Serena'],
+  'Galicia': ['Santiago de Compostela', 'A Coruña', 'Vigo', 'Ourense', 'Lugo', 'Pontevedra', 'Ferrol'],
+  'Comunidad de Madrid': ['Madrid', 'Alcalá de Henares', 'Móstoles', 'Fuenlabrada', 'Getafe', 'Leganés', 'Alcorcón', 'Torrejón de Ardoz'],
+  'Región de Murcia': ['Murcia', 'Cartagena', 'Lorca', 'Molina de Segura', 'Águilas'],
+  'Navarra': ['Pamplona', 'Tudela', 'Barañáin', 'Estella', 'Tafalla'],
+  'País Vasco': ['Bilbao', 'San Sebastián', 'Vitoria-Gasteiz', 'Barakaldo', 'Getxo', 'Irún'],
+  'La Rioja': ['Logroño', 'Calahorra', 'Arnedo', 'Haro', 'Alfaro'],
+  'Ceuta': ['Ceuta'],
+  'Melilla': ['Melilla'],
+};
+
 interface SearchResult {
   saved: any[];
   skipped: any[];
@@ -17,15 +57,23 @@ export default function SearchPage() {
   const [mode, setMode] = useState<'libre' | 'filtros'>('libre');
   const [query, setQuery] = useState('');
   const [sector, setSector] = useState('');
+  const [comunidad, setComunidad] = useState('');
   const [ciudad, setCiudad] = useState('');
   const [numResults, setNumResults] = useState('10');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<SearchResult | null>(null);
   const [error, setError] = useState('');
 
+  const ciudadesDisponibles = comunidad ? COMUNIDADES_CIUDADES[comunidad] || [] : [];
+
+  const handleComunidadChange = (value: string) => {
+    setComunidad(value);
+    setCiudad('');
+  };
+
   const buildQuery = () => {
     if (mode === 'libre') return query.trim();
-    const parts = [sector.trim(), ciudad.trim()].filter(Boolean);
+    const parts = [sector, ciudad, comunidad].filter(Boolean);
     return parts.join(' ');
   };
 
@@ -60,7 +108,6 @@ export default function SearchPage() {
         </p>
       </div>
 
-      {/* Pestañas */}
       <div className="flex gap-2">
         <button
           onClick={() => setMode('libre')}
@@ -78,7 +125,6 @@ export default function SearchPage() {
         </button>
       </div>
 
-      {/* Formulario */}
       <form onSubmit={handleSearch} className="card-surface p-5 space-y-4">
         {mode === 'libre' ? (
           <Input
@@ -88,14 +134,45 @@ export default function SearchPage() {
             required
           />
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label className="text-sm font-medium text-foreground">Sector / Actividad</label>
-              <Input value={sector} onChange={e => setSector(e.target.value)} placeholder="ej: fontanería, abogados" className="mt-1" />
+              <Select value={sector} onValueChange={setSector}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="Seleccionar sector" />
+                </SelectTrigger>
+                <SelectContent>
+                  {SECTORES.map(s => (
+                    <SelectItem key={s} value={s}>{s}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-foreground">Comunidad Autónoma</label>
+              <Select value={comunidad} onValueChange={handleComunidadChange}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="Seleccionar comunidad" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.keys(COMUNIDADES_CIUDADES).map(c => (
+                    <SelectItem key={c} value={c}>{c}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div>
               <label className="text-sm font-medium text-foreground">Ciudad</label>
-              <Input value={ciudad} onChange={e => setCiudad(e.target.value)} placeholder="ej: Badajoz, Madrid" className="mt-1" />
+              <Select value={ciudad} onValueChange={setCiudad} disabled={!comunidad}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder={comunidad ? 'Seleccionar ciudad' : 'Elige comunidad primero'} />
+                </SelectTrigger>
+                <SelectContent>
+                  {ciudadesDisponibles.map(c => (
+                    <SelectItem key={c} value={c}>{c}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
         )}
