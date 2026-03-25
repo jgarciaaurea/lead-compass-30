@@ -3,7 +3,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, CheckCircle2, XCircle, AlertTriangle, MapPin, Globe } from 'lucide-react';
+import { Loader2, CheckCircle2, XCircle, AlertTriangle, MapPin, Globe, Search, SlidersHorizontal } from 'lucide-react';
+
+const API_URL = 'https://unvouched-orrow-lorri.ngrok-free.dev';
 
 interface SearchResult {
   saved: any[];
@@ -12,42 +14,42 @@ interface SearchResult {
 }
 
 export default function SearchPage() {
+  const [mode, setMode] = useState<'libre' | 'filtros'>('libre');
   const [query, setQuery] = useState('');
+  const [sector, setSector] = useState('');
+  const [ciudad, setCiudad] = useState('');
   const [numResults, setNumResults] = useState('10');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<SearchResult | null>(null);
   const [error, setError] = useState('');
 
+  const buildQuery = () => {
+    if (mode === 'libre') return query.trim();
+    const parts = [sector.trim(), ciudad.trim()].filter(Boolean);
+    return parts.join(' ');
+  };
+
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!query.trim()) return;
+    const finalQuery = buildQuery();
+    if (!finalQuery) return;
     setLoading(true);
     setResult(null);
     setError('');
-
     try {
-      const res = await fetch('https://unvouched-orrow-lorri.ngrok-free.dev/search-and-scrape', {
+      const res = await fetch(`${API_URL}/search-and-scrape`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'ngrok-skip-browser-warning': 'true',
-        },
-        body: JSON.stringify({ query: query.trim(), num_results: Number(numResults) }),
+        headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
+        body: JSON.stringify({ query: finalQuery, num_results: Number(numResults) }),
       });
       const data = await res.json();
-      setResult({
-        saved: data.saved || [],
-        skipped: data.skipped || [],
-        errors: data.errors || [],
-      });
+      setResult({ saved: data.saved || [], skipped: data.skipped || [], errors: data.errors || [] });
     } catch (err: any) {
       setError(err.message || 'Error al realizar la búsqueda');
     } finally {
       setLoading(false);
     }
   };
-
-  const total = result ? result.saved.length + result.skipped.length + result.errors.length : 0;
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
@@ -58,28 +60,64 @@ export default function SearchPage() {
         </p>
       </div>
 
-      <form onSubmit={handleSearch} className="card-surface p-5 flex flex-col sm:flex-row gap-3">
-        <Input
-          value={query}
-          onChange={e => setQuery(e.target.value)}
-          placeholder="ej: fontanería Badajoz, restaurantes Madrid"
-          required
-          className="flex-1"
-        />
-        <Select value={numResults} onValueChange={setNumResults}>
-          <SelectTrigger className="w-[100px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="5">5</SelectItem>
-            <SelectItem value="10">10</SelectItem>
-            <SelectItem value="20">20</SelectItem>
-          </SelectContent>
-        </Select>
-        <Button type="submit" disabled={loading}>
-          {loading && <Loader2 className="h-4 w-4 mr-1 animate-spin" />}
-          {loading ? 'Buscando...' : 'Buscar y guardar leads'}
-        </Button>
+      {/* Pestañas */}
+      <div className="flex gap-2">
+        <button
+          onClick={() => setMode('libre')}
+          className={`flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-medium transition-colors ${mode === 'libre' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:text-foreground'}`}
+        >
+          <Search className="h-4 w-4" />
+          Búsqueda libre
+        </button>
+        <button
+          onClick={() => setMode('filtros')}
+          className={`flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-medium transition-colors ${mode === 'filtros' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:text-foreground'}`}
+        >
+          <SlidersHorizontal className="h-4 w-4" />
+          Búsqueda con filtros
+        </button>
+      </div>
+
+      {/* Formulario */}
+      <form onSubmit={handleSearch} className="card-surface p-5 space-y-4">
+        {mode === 'libre' ? (
+          <Input
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            placeholder="ej: fontanería Badajoz, restaurantes Madrid"
+            required
+          />
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm font-medium text-foreground">Sector / Actividad</label>
+              <Input value={sector} onChange={e => setSector(e.target.value)} placeholder="ej: fontanería, abogados" className="mt-1" />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-foreground">Ciudad</label>
+              <Input value={ciudad} onChange={e => setCiudad(e.target.value)} placeholder="ej: Badajoz, Madrid" className="mt-1" />
+            </div>
+          </div>
+        )}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">Resultados:</span>
+            <Select value={numResults} onValueChange={setNumResults}>
+              <SelectTrigger className="w-[80px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="5">5</SelectItem>
+                <SelectItem value="10">10</SelectItem>
+                <SelectItem value="20">20</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <Button type="submit" disabled={loading} className="ml-auto">
+            {loading && <Loader2 className="h-4 w-4 mr-1 animate-spin" />}
+            {loading ? 'Buscando...' : 'Buscar y guardar leads'}
+          </Button>
+        </div>
       </form>
 
       {error && <p className="text-sm text-destructive">{error}</p>}
